@@ -93,7 +93,8 @@ const UploadItems = () => {
                 <img src={`/public/${product.image}`} alt={product.name} className="rounded-t-lg" />
                 <CardContent className="pt-4">
                   <h3 className="font-semibold">{product.name}</h3>
-                  <p className="text-sm text-muted-foreground">₹{product.price.toFixed(2)}</p>
+                  <p className="text-sm text-muted-foreground">₹{Number(u.price).toFixed(2)}
+</p>
                   <Button onClick={() => handleAddToCart(product)} className="w-full mt-4">
                     Add to Cart
                   </Button>

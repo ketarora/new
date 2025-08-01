@@ -8,6 +8,7 @@ import com.example.Gruhani.dtos.sellerLogindto;
 import com.example.Gruhani.models.Seller;
 import com.example.Gruhani.models.Users;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -105,6 +106,11 @@ public ResponseEntity<?> sellerRegister(@RequestBody sellerDto sd)
 ));
 
 }
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
+        request.getSession().invalidate(); // Invalidate session
+        return ResponseEntity.ok("Logged out successfully");
+    }
     @PostMapping("/logins")
     public ResponseEntity<?> loginPage(@RequestBody LoginRequest lr, HttpServletRequest req) {
         Authentication authentication;
@@ -162,6 +168,8 @@ public ResponseEntity<?> sellerRegister(@RequestBody sellerDto sd)
                 )
         ));
 
-         // Redirect to frontend login
+
+
+        // Redirect to frontend login
     }
 }
