@@ -11,6 +11,7 @@ import com.google.protobuf.ByteString;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,7 +30,7 @@ public class image_to_cart {
 @Autowired
     ProductRepo prepo;
 
-
+        @CrossOrigin("https://grihini-1.onrender.com")
         @PostMapping("/upload")
         public ResponseEntity<List<productdto>> methew(@RequestParam("file") MultipartFile file) throws IOException {
             // 👇 Load credentials from resources folder (works in JAR on Render)
