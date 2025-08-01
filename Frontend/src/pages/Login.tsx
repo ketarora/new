@@ -72,7 +72,7 @@ const Login = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-    credentials: 'include',
+         credentials: 'include',
         body: JSON.stringify({
           email: customerData.email,
           password: customerData.password,
@@ -91,7 +91,7 @@ const Login = () => {
         if (customerData.userType === 'seller') {
           navigate('/seller-dashboard');
         } else {
-          navigate('/customer-dashboard');
+          navigate('/');
         }
       } else {
         toast.error(data.message || 'Login failed');

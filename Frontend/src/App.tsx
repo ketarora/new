@@ -7,6 +7,10 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import CartPage from "./pages/Cart";
+import CheckoutPage from "./pages/Checkout";
+import PaymentPage from "./pages/Payment";
+import OrderConfirmationPage from "./pages/OrderConfirmation";
 import ExploreProducts from "./pages/ExploreProducts";
 import CustomizeMeal from "./pages/CustomizeMeal";
 import SuccessStories from "./pages/SuccessStories";
@@ -68,6 +72,10 @@ const App = () => {
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
+              <Route path="/cart" element={<CartPage />} />
+              <Route path="/checkout" element={<CheckoutPage />} />
+              <Route path="/payment" element={<PaymentPage />} />
+              <Route path="/order-confirmation" element={<OrderConfirmationPage />} />
               <Route path="/explore" element={<ExploreProducts />} />
               <Route path="/customize-meal" element={<CustomizeMeal />} />
               <Route path="/success-stories" element={<SuccessStories />} />

@@ -1,3 +1,5 @@
+// src/context/AuthContext.tsx
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { apiClient } from '@/lib/api';
 
@@ -27,17 +29,22 @@ export const useAuth = () => {
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-
   useEffect(() => {
-    // Check for stored user data on app load
     const storedUser = localStorage.getItem('gruhini_user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    } else {
-      // Check if user is authenticated on the backend
-      checkBackendAuth();
+    try {
+      if (storedUser && storedUser !== "undefined") {
+        setUser(JSON.parse(storedUser));
+      } else {
+        checkBackendAuth(); // fallback to backend
+      }
+    } catch (error) {
+      console.error("Failed to parse stored user:", error);
+      localStorage.removeItem("gruhini_user");
+      checkBackendAuth(); // also fallback
     }
   }, []);
+
+
 
   const checkBackendAuth = async () => {
     try {
