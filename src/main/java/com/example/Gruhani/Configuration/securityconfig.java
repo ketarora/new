@@ -51,7 +51,7 @@ public UserDetailsService userDetailsService()
                     .invalidateHttpSession(true)
                     .deleteCookies("JSESSIONID"))
                 .authorizeHttpRequests(o->o
-                    .requestMatchers("/logins","/register","/home","/api/**","/register-seller","/seller-login","/view-pending","/get-all-products","/add-product","/got-message","/upload").permitAll()
+                    .requestMatchers("/**").permitAll()///logins","/register","/home","/api/**","/register-seller","/seller-login","/view-pending","/get-all-products","/add-product","/got-message","/upload"
                     .anyRequest().authenticated())
 
                 .build();
