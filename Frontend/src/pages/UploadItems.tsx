@@ -34,7 +34,7 @@ const UploadItems = () => {
     try {
       const response = await fetch("https://grihini-wtbw.onrender.com/upload", {
         method: "POST",
-
+        credentials: 'include',
         body: formData,
       });
 

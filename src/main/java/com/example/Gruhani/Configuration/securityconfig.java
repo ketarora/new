@@ -59,12 +59,16 @@ public UserDetailsService userDetailsService()
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
+
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:5173,https://grihini-1.onrender.com"));
+        configuration.setAllowedOrigins(Arrays.asList("https://grihini-1.onrender.com")); // ✅ use this
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.setAllowCredentials(true);
-        
+        configuration.setAllowCredentials(true); // ✅ keep this
+
+// Optional: Allow exposing headers if needed (e.g., Authorization)
+// configuration.setExposedHeaders(Arrays.asList("Authorization"));
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
