@@ -7,8 +7,16 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 
 interface Product {
   name: string;
-  price: number;
+  price: string;
   image: string;
+  category:string;
+  subcategory:string;
+  rating:number;
+  discount:string;
+  verified:boolean;
+  stock:number;
+   description:string;
+   status:string;
 }
 
 const UploadItems = () => {
