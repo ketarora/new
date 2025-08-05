@@ -21,6 +21,7 @@ const ExploreProducts = () => {
   const HEADER_HEIGHT_OFFSET = "72px";
 
   useEffect(() => {
+      /*
     const fetchProducts = async () => {
       setIsLoading(true);
       try {
@@ -54,7 +55,51 @@ const ExploreProducts = () => {
       } finally {
         setIsLoading(false);
       }
-    };
+    };*/
+const fetchProducts = async () => {
+  setIsLoading(true);
+  try {
+    const response = await fetch("http://localhost:8085/get-all-products", {
+      headers: {
+        "Accept": "application/x-protobuf"
+      },
+  credentials : 'include'
+    });
+
+    const arrayBuffer = await response.arrayBuffer();
+    const bytes = new Uint8Array(arrayBuffer);
+    const decoded = ProductList.decode(bytes);
+
+    const approved = decoded.products.filter((p: any) => p.status === "approved");
+
+    const mapped = approved.map((p: any) => ({
+      id: p.id,
+      name: p.name,
+      seller: "", // Update based on schema
+      price: `₹${p.price}`,
+      originalPrice: undefined,
+      discount: undefined,
+      rating: p.rating || 0,
+      deliveryTime: "", // No such field in proto? leave blank or add it
+      image: p.image || "/placeholder.svg",
+      badge: p.badge || "",
+      verified: p.verified || false,
+      category: p.category || "",
+      subcategory: p.subcategory || "",
+      description: p.description || "",
+      kitchenVideoUrl: undefined,
+      status: "approved"
+    }));
+
+    setProducts(mapped);
+  } catch (e) {
+    console.error("Failed to fetch protobuf:", e);
+    setProducts([]);
+  } finally {
+    setIsLoading(false);
+  }
+};
+
     fetchProducts();
   }, []);
 

@@ -3,7 +3,6 @@ C:\Users\HP\Downloads\Grahini-main\Grahini-main\src\main\java\com\example\Gruhan
 C:\Users\HP\Downloads\Grahini-main\Grahini-main\src\main\java\com\example\Gruhani\Controllers\image_to_cart.java
 C:\Users\HP\Downloads\Grahini-main\Grahini-main\src\main\java\com\example\Gruhani\Controllers\ProductandSeller.java
 C:\Users\HP\Downloads\Grahini-main\Grahini-main\src\main\java\com\example\Gruhani\Controllers\products_seller.java
-C:\Users\HP\Downloads\Grahini-main\Grahini-main\src\main\java\com\example\Gruhani\Controllers\Whatsapp.java
 C:\Users\HP\Downloads\Grahini-main\Grahini-main\src\main\java\com\example\Gruhani\dtos\LoginRequest.java
 C:\Users\HP\Downloads\Grahini-main\Grahini-main\src\main\java\com\example\Gruhani\dtos\productdto.java
 C:\Users\HP\Downloads\Grahini-main\Grahini-main\src\main\java\com\example\Gruhani\dtos\sellerDto.java
@@ -20,3 +19,5 @@ C:\Users\HP\Downloads\Grahini-main\Grahini-main\src\main\java\com\example\Gruhan
 C:\Users\HP\Downloads\Grahini-main\Grahini-main\src\main\java\com\example\Gruhani\Repositories\ProductRepo.java
 C:\Users\HP\Downloads\Grahini-main\Grahini-main\src\main\java\com\example\Gruhani\Repositories\SellerRepo.java
 C:\Users\HP\Downloads\Grahini-main\Grahini-main\src\main\java\com\example\Gruhani\Repositories\UserRepo.java
+C:\Users\HP\Downloads\Grahini-main\Grahini-main\src\main\java\com\example\Gruhani\service\Mail.java
+C:\Users\HP\Downloads\Grahini-main\Grahini-main\target\generated-sources\protobuf\java\com\example\Gruhani\protobuf\ProductOuterClass.java

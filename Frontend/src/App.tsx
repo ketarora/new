@@ -33,6 +33,10 @@ import Register from "./pages/Register";
 import AdminDashboard from './pages/AdminDashboard';
 import './App.css';
 
+import { ProductList } from './product_pb.js';
+
+const ProductLists = protobuf.ProductList;
+
 
 
 

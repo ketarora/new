@@ -1,0 +1,20 @@
+syntax = "proto3";
+option java_package = "com.example.Gruhani.protobuf";
+option java_outer_classname = "ProductOuterClass";
+message Producto {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  string price = 4;
+  float rating = 5;
+  bool verified = 6;
+  string badge = 7;
+  string category = 8;
+  string subcategory = 9;
+  int32 stock = 10;
+  string image = 11;
+}
+
+message ProductList {
+  repeated Producto products = 1;
+}

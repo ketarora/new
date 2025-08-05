@@ -43,6 +43,12 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.google.protobuf</groupId>
+			<artifactId>protobuf-java</artifactId>
+			<version>3.24.4</version>
+		</dependency>
+
+		<dependency>
 			<groupId>com.google.cloud</groupId>
 			<artifactId>google-cloud-vision</artifactId>
 			<version>3.28.0</version>
@@ -75,14 +81,25 @@
 <!--			<version>42.7.3</version>-->
 <!--		</dependency>-->
 	</dependencies>
-
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
+	<plugin>
+		<groupId>org.xolstice.maven.plugins</groupId>
+		<artifactId>protobuf-maven-plugin</artifactId>
+		<version>0.6.1</version>
+		<configuration>
+			<protocArtifact>com.google.protobuf:protoc:3.19.1:exe:windows-x86_64</protocArtifact>
+		</configuration>
+		<executions>
+			<execution>
+				<goals>
+					<goal>compile</goal>
+				</goals>
+			</execution>
+		</executions>
+	</plugin>
 		</plugins>
 	</build>
+
 
 </project>

@@ -5,6 +5,7 @@ import com.example.Gruhani.Repositories.SellerRepo;
 import com.example.Gruhani.Repositories.UserRepo;
 import com.example.Gruhani.dtos.userDto;
 import com.example.Gruhani.models.Users;
+import com.example.Gruhani.service.Mail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -23,6 +24,7 @@ public class ProductandSeller {
     SellerRepo srepo;
     @Autowired
     UserRepo ur;
+
 @Autowired
     BCryptPasswordEncoder bcp;
     @PostMapping("/register")
@@ -43,6 +45,7 @@ public class ProductandSeller {
 
 
                 ur.save(sell);
+
 
                 Map<String, Object> response = new HashMap<>();
                 response.put("success", true);
