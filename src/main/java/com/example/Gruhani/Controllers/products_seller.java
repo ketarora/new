@@ -85,7 +85,7 @@ public class products_seller {
 
     @CrossOrigin("*")
     @GetMapping(value = "/get-all-products", produces = "application/x-protobuf")
-    public ResponseEntity<ProductOuterClass.ProductList> getProductsAsProtobuf() {
+    public byte[]  getProductsAsProtobufss() {
         List<product> dbProducts = prepo.findAllBystatus("approved");
 
         ProductOuterClass.ProductList.Builder listBuilder = ProductOuterClass.ProductList.newBuilder();
@@ -100,19 +100,16 @@ public class products_seller {
 
                     .setVerified(p.getVerified()==null?false:p.getVerified())
                     .setBadge(p.getBadge())
-                    .setCategory(p.getCategory())
-                    .setSubcategory(p.getSubcategory())
+
+                    .setCategory(p.getCategory()==null?"Home Decor":p.getCategory())
+                    .setSubcategory(p.getSubcategory()==null?"Herbal Soaps":p.getSubcategory())
                     .setStock(p.getStock())
                     .setImage(p.getImage())
                     .build();
 
             listBuilder.addProducts(protoProduct);
         }
-
-        return ResponseEntity
-                .ok()
-                .contentType(new MediaType("application", "x-protobuf"))
-                .body(listBuilder.build());
+ return  listBuilder.build().toByteArray();
     }
 
 

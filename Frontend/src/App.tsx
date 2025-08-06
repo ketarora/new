@@ -33,9 +33,13 @@ import Register from "./pages/Register";
 import AdminDashboard from './pages/AdminDashboard';
 import './App.css';
 
-import { ProductList } from './product_pb.js';
+import { decodeProductList } from './lib/product.client.js';
+const response = await fetch('/get-all-products');
+const bytes = new Uint8Array(await response.arrayBuffer());
+const { products } = decodeProductList(bytes);
 
-const ProductLists = protobuf.ProductList;
+
+
 
 
 
