@@ -1,117 +1,258 @@
-export function decodeProductList(bytes) {
+// CommonJS protobuf decoder for ProductList.
+// Exports decodeProductList function using module.exports.
+
+function decodeProductList(bytes) {
   const products = [];
-  let offset = 0;
 
-  while (offset < bytes.length) {
-    const { tag, wireType, value, newOffset } = readField(bytes, offset);
+  if (bytes.length === 0) {
+    console.warn('Empty byte array received');
+    return { products: [] };
+  }
 
-    if (tag === 1 && wireType === 2) {
-      const productBytes = value;
-      const product = decodeProduct(productBytes);
-      products.push(product);
+  try {
+    let offset = 0;
+    let productCount = 0;
+
+    while (offset < bytes.length && productCount < 1000) {
+      const fieldResult = readFieldRobust(bytes, offset);
+      if (!fieldResult) {
+        break;
+      }
+
+      const { tag, wireType, value, newOffset } = fieldResult;
+
+      if (tag === 1 && wireType === 2 && value instanceof Uint8Array) {
+        const product = decodeProductRobust(value);
+        if (product) {
+          products.push(product);
+          productCount++;
+        }
+      }
+
+      offset = newOffset;
+
+      if (newOffset <= offset) {
+        break;
+      }
     }
-
-    offset = newOffset;
+  } catch (error) {
+    console.error('Critical error in decodeProductList:', error);
   }
 
   return { products };
 }
 
-function decodeProduct(bytes) {
+function decodeProductRobust(bytes) {
   const product = {};
   let offset = 0;
 
-  while (offset < bytes.length) {
-    const { tag, wireType, value, newOffset } = readField(bytes, offset);
+  try {
+    let fieldCount = 0;
 
-    switch (tag) {
-      case 1: product.id = value; break;
-      case 2: product.name = decodeText(value); break;
-      case 3: product.description = decodeText(value); break;
-      case 4: product.price = readDouble(value); break;
-      case 5: product.rating = readDouble(value); break;
-      case 6: product.verified = Boolean(value); break;
-      case 7: product.badge = decodeText(value); break;
-      case 8: product.category = decodeText(value); break;
-      case 9: product.subcategory = decodeText(value); break;
-      case 10: product.stock = value; break;
-      case 11: product.image = decodeText(value); break;
+    while (offset < bytes.length && fieldCount < 50) {
+      const fieldResult = readFieldRobust(bytes, offset);
+      if (!fieldResult) {
+        break;
+      }
+
+      const { tag, wireType, value, newOffset } = fieldResult;
+
+      switch (tag) {
+        case 1:
+          product.id = decodeStringField(value, wireType);
+          break;
+        case 2:
+          product.name = decodeStringField(value, wireType);
+          break;
+        case 3:
+          product.description = decodeStringField(value, wireType);
+          break;
+        case 4:
+          product.price = decodeStringField(value, wireType);
+          break;
+        case 5:
+          product.rating = decodeFloatField(value, wireType);
+          break;
+        case 6:
+          product.verified = decodeBoolField(value, wireType);
+          break;
+        case 7:
+          product.badge = decodeStringField(value, wireType);
+          break;
+        case 8:
+          product.category = decodeStringField(value, wireType);
+          break;
+        case 9:
+          product.subcategory = decodeStringField(value, wireType);
+          break;
+        case 10:
+          product.stock = decodeIntField(value, wireType);
+          break;
+        case 11:
+          product.image = decodeStringField(value, wireType);
+          break;
+        default:
+          break;
+      }
+
+      offset = newOffset;
+      fieldCount++;
+
+      if (newOffset <= offset) {
+        break;
+      }
     }
 
-    offset = newOffset;
+    return {
+      id: product.id || '0',
+      name: product.name || 'Unknown Product',
+      description: product.description || 'No description available',
+      price: product.price || '0',
+      rating: product.rating || 0,
+      verified: product.verified || false,
+      badge: product.badge || '',
+      category: product.category || 'Home Decor',
+      subcategory: product.subcategory || 'Herbal Soaps',
+      stock: product.stock || 0,
+      image: product.image || '/placeholder.svg'
+    };
+  } catch (error) {
+    console.error('Error decoding product:', error);
+    return null;
+  }
+}
+
+function readFieldRobust(bytes, offset) {
+  if (offset >= bytes.length) {
+    return null;
   }
 
-  return {
-    id: product.id || 0,
-    name: product.name || '',
-    description: product.description || '',
-    price: product.price || 0,
-    rating: product.rating || 0,
-    verified: product.verified || false,
-    badge: product.badge || '',
-    category: product.category || 'Home Decor',
-    subcategory: product.subcategory || 'Herbal Soaps',
-    stock: product.stock || 0,
-    image: product.image || '/placeholder.svg'
-  };
-}
+  const varintResult = readVarintRobust(bytes, offset);
+  if (!varintResult) {
+    return null;
+  }
 
-function decodeText(value) {
-  return value instanceof Uint8Array
-    ? new TextDecoder().decode(value)
-    : '';
-}
+  const tagAndWireType = varintResult.value;
+  const afterTag = varintResult.newOffset;
+  const tag = tagAndWireType >> 3;
+  const wireType = tagAndWireType & 0x7;
 
-function readField(bytes, offset) {
-  const { value: tagAndWire, newOffset: afterTag } = readVarint(bytes, offset);
-  const tag = tagAndWire >> 3;
-  const wireType = tagAndWire & 0x07;
+  if (![0, 1, 2, 3, 4, 5].includes(wireType)) {
+    return readFieldRobust(bytes, offset + 1);
+  }
 
   let value;
   let newOffset;
 
   switch (wireType) {
-    case 0: // varint
-      ({ value, newOffset } = readVarint(bytes, afterTag));
+    case 0:
+      const varintValue = readVarintRobust(bytes, afterTag);
+      if (!varintValue) return null;
+      value = varintValue.value;
+      newOffset = varintValue.newOffset;
       break;
-    case 1: // 64-bit
+    case 1:
+      if (afterTag + 8 > bytes.length) return null;
       value = bytes.slice(afterTag, afterTag + 8);
       newOffset = afterTag + 8;
       break;
-    case 2: // length-delimited
-      const { value: len, newOffset: afterLen } = readVarint(bytes, afterTag);
-      value = bytes.slice(afterLen, afterLen + len);
-      newOffset = afterLen + len;
+    case 2:
+      const lengthResult = readVarintRobust(bytes, afterTag);
+      if (!lengthResult) return null;
+      const length = lengthResult.value;
+      const afterLength = lengthResult.newOffset;
+      if (afterLength + length > bytes.length) return null;
+      value = bytes.slice(afterLength, afterLength + length);
+      newOffset = afterLength + length;
       break;
-    case 5: // 32-bit
+    case 3:
+      let groupDepth = 1;
+      newOffset = afterTag;
+      while (newOffset < bytes.length && groupDepth > 0) {
+        const nextField = readVarintRobust(bytes, newOffset);
+        if (!nextField) break;
+        const nextWireType = nextField.value & 0x7;
+        if (nextWireType === 3) groupDepth++;
+        else if (nextWireType === 4) groupDepth--;
+        newOffset = nextField.newOffset;
+      }
+      value = new Uint8Array(0);
+      break;
+    case 4:
+      value = new Uint8Array(0);
+      newOffset = afterTag;
+      break;
+    case 5:
+      if (afterTag + 4 > bytes.length) return null;
       value = bytes.slice(afterTag, afterTag + 4);
       newOffset = afterTag + 4;
       break;
     default:
-      throw new Error(`Unsupported wire type ${wireType}`);
+      return null;
   }
 
   return { tag, wireType, value, newOffset };
 }
 
-function readVarint(bytes, offset) {
-  let result = 0;
+function readVarintRobust(bytes, offset) {
+  let value = 0;
   let shift = 0;
-  let pos = offset;
+  let newOffset = offset;
 
-  while (true) {
-    const byte = bytes[pos++];
-    result |= (byte & 0x7F) << shift;
-    if ((byte & 0x80) === 0) break;
+  while (newOffset < bytes.length) {
+    const byte = bytes[newOffset++];
+    value |= (byte & 0x7F) << shift;
+
+    if ((byte & 0x80) === 0) {
+      break;
+    }
+
     shift += 7;
+    if (shift >= 64) {
+      return null;
+    }
   }
 
-  return { value: result, newOffset: pos };
+  return { value, newOffset };
 }
 
-function readDouble(bytes) {
-  const buffer = new ArrayBuffer(8);
-  const view = new DataView(buffer);
-  bytes.forEach((b, i) => view.setUint8(i, b));
-  return view.getFloat64(0, true);
+function decodeStringField(value, wireType) {
+  if (wireType === 2 && value instanceof Uint8Array) {
+    return new TextDecoder('utf-8').decode(value);
+  } else if (wireType === 0) {
+    return String(value);
+  }
+  return '';
 }
+
+function decodeFloatField(value, wireType) {
+  if (wireType === 5 && value instanceof Uint8Array && value.length === 4) {
+    const view = new DataView(value.buffer, value.byteOffset, 4);
+    return view.getFloat32(0, true);
+  } else if (wireType === 1 && value instanceof Uint8Array && value.length === 8) {
+    const view = new DataView(value.buffer, value.byteOffset, 8);
+    return view.getFloat64(0, true);
+  } else if (wireType === 0) {
+    return Number(value);
+  }
+  return 0;
+}
+
+function decodeBoolField(value, wireType) {
+  if (wireType === 0) {
+    return Boolean(value);
+  }
+  return false;
+}
+
+function decodeIntField(value, wireType) {
+  if (wireType === 0) {
+    return Number(value);
+  }
+  return 0;
+}
+
+module.exports = {
+  decodeProductList,
+};
+</create_file>
